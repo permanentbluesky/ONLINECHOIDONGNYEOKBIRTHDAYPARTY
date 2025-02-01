@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>온라인 녘형 생일파티</title>
+    <link href="https://fonts.googleapis.com/css2?family=Akzidenz+Grotesk&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #87CEEB;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            font-family: 'Akzidenz Grotesk', sans-serif;
+        }
+        .envelope {
+            position: relative;
+            width: 400px;
+            height: 300px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            cursor: pointer;
+        }
+        .flap {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 50%;
+            background-color: #d3d3d3;
+            clip-path: polygon(0 0, 100% 0, 50% 100%);
+            transition: transform 0.5s ease-in-out;
+            transform-origin: top;
+        }
+        .letter {
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            width: 80%;
+            background-color: white;
+            padding: 20px;
+            transform: translateX(-50%);
+            transition: top 0.5s ease-in-out;
+        }
+        textarea {
+            width: 100%;
+            height: 100px;
+            border: none;
+            outline: none;
+            font-size: 16px;
+            font-family: inherit;
+            resize: none;
+        }
+        button {
+            margin-top: 10px;
+            padding: 8px 12px;
+            font-size: 14px;
+            border: none;
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .envelope.open .flap {
+            transform: rotateX(180deg);
+        }
+        .envelope.open .letter {
+            top: 30%;
+        }
+        .guestbook {
+            margin-top: 20px;
+            width: 320px;
+            background: white;
+            padding: 20px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            max-height: 250px;
+            overflow-y: auto;
+            position: relative;
+            border: 2px solid #d3d3d3;
+        }
+        .guestbook h3 {
+            text-align: center;
+            margin: 0;
+            padding-bottom: 10px;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        li {
+            background: #f9f9f9;
+            margin: 5px 0;
+            padding: 8px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="envelope" onclick="toggleEnvelope()">
+        <div class="flap"></div>
+        <div class="letter">
+            <textarea id="message" placeholder="여기에 편지를 작성하세요..."></textarea>
+            <button onclick="addMessage(event)">작성</button>
+        </div>
+    </div>
+    <div class="guestbook">
+        <h3>녘형에게 한마디</h3>
+        <ul id="messages"></ul>
+    </div>
+    
+    <script>
+        document.addEventListener("DOMContentLoaded", loadMessages);
+        function toggleEnvelope() {
+            let envelope = document.querySelector(".envelope");
+            envelope.classList.toggle("open");
+        }
+        function addMessage(event) {
+            event.stopPropagation();
+            let messageText = document.getElementById("message").value;
+            if (messageText.trim() !== "") {
+                let messageList = document.getElementById("messages");
+                let newMessage = document.createElement("li");
+                newMessage.textContent = messageText;
+                messageList.appendChild(newMessage);
+                saveMessage(messageText);
+                document.getElementById("message").value = "";
+            }
+        }
+        function saveMessage(message) {
+            let messages = JSON.parse(localStorage.getItem("guestbook")) || [];
+            messages.push(message);
+            localStorage.setItem("guestbook", JSON.stringify(messages));
+        }
+        function loadMessages() {
+            let messages = JSON.parse(localStorage.getItem("guestbook")) || [];
+            let messageList = document.getElementById("messages");
+            messages.forEach(msg => {
+                let newMessage = document.createElement("li");
+                newMessage.textContent = msg;
+                messageList.appendChild(newMessage);
+            });
+        }
+    </script>
+</body>
+</html>
